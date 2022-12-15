@@ -2,12 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { IsEmail, IsOptional, IsUrl, Length } from 'class-validator';
+import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Entity()
 @Unique(['username'])
@@ -38,17 +40,19 @@ export class User {
   password: string;
 
   @Column()
-  wishes: ''; //! Добавить тип колонки и тип связи после описания сущности "Wishes"
+  @OneToMany(() => Wish, (wish) => wish.owner)
+  wishes: Wish[];
 
   @Column()
-  offers: ''; //! Добавить тип колонки и тип связи после описания сущности "offers"
+  @OneToMany(() => Wish, (wish) => wish.id) //!????????????????
+  offers: Wish[];
 
   @Column()
-  wishlists: ''; //! Добавить тип колонки и тип связи после описания сущности "Wishes"
+  wishlists: ''; //! Добавить тип колонки и тип связи после описания сущности "Wishlist"
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }
