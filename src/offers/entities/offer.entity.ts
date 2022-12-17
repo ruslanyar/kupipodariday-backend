@@ -20,8 +20,8 @@ export class Offer {
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   amount: number;
 
-  @Column()
-  hidden = false;
+  @Column({ default: false })
+  hidden: boolean;
 
   @ManyToOne(() => User, (user) => user.offers)
   user: User;

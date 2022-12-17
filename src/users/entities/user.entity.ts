@@ -24,15 +24,15 @@ export class User {
   @Length(2, 30)
   username: string;
 
-  @Column()
+  @Column({ default: 'Пока ничего не рассказал о себе' })
   @IsOptional()
   @Length(2, 200)
-  about = 'Пока ничего не рассказал о себе';
+  about: string;
 
-  @Column()
+  @Column({ default: 'https://i.pravatar.cc/300' })
   @IsOptional()
   @IsUrl()
-  avatar = 'https://i.pravatar.cc/300';
+  avatar: string;
 
   @Column()
   @IsEmail()
@@ -41,7 +41,6 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
   @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];
 
