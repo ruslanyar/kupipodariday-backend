@@ -34,7 +34,6 @@ export class Wish {
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   raised: number;
 
-  @Column()
   @ManyToOne(() => User, (user) => user.wishes)
   owner: UserPublicProfileResponseDto;
 

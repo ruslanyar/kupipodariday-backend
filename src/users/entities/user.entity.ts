@@ -43,11 +43,9 @@ export class User {
   @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];
 
-  @Column()
   @OneToMany(() => Wish, (wish) => wish.id) //!????????????????
   offers: Wish[];
 
-  @Column()
   wishlists: ''; //! Добавить тип колонки и тип связи после описания сущности "Wishlist"
 
   @CreateDateColumn()
