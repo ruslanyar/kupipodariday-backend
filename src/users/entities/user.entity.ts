@@ -10,6 +10,7 @@ import {
 
 import { IsEmail, IsOptional, IsUrl, Length } from 'class-validator';
 import { Wish } from 'src/wishes/entities/wish.entity';
+import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
 
 @Entity()
 @Unique(['username'])
@@ -46,7 +47,8 @@ export class User {
   @OneToMany(() => Wish, (wish) => wish.id) //!????????????????
   offers: Wish[];
 
-  wishlists: ''; //! Добавить тип колонки и тип связи после описания сущности "Wishlist"
+  @OneToMany(() => Wishlist, (list) => list.owner)
+  wishlists: Wishlist[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -6,11 +6,11 @@ export class CreateUserDto {
 
   @IsOptional()
   @Length(2, 200)
-  about?: string;
+  about: string;
 
   @IsOptional()
   @IsUrl()
-  avatar?: string;
+  avatar: string;
 
   @IsEmail()
   email: string;
