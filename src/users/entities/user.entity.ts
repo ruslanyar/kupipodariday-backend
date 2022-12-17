@@ -11,6 +11,7 @@ import {
 import { IsEmail, IsOptional, IsUrl, Length } from 'class-validator';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { Offer } from 'src/offers/entities/offer.entity';
 
 @Entity()
 @Unique(['username'])
@@ -44,8 +45,8 @@ export class User {
   @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];
 
-  @OneToMany(() => Wish, (wish) => wish.id) //!????????????????
-  offers: Wish[];
+  @OneToMany(() => Offer, (offer) => offer.user)
+  offers: Offer[];
 
   @OneToMany(() => Wishlist, (list) => list.owner)
   wishlists: Wishlist[];

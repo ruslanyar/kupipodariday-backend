@@ -4,12 +4,14 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { User } from 'src/users/entities/user.entity';
 import { UserPublicProfileResponseDto } from 'src/users/dto/user-public-profile-response.dto';
+import { Offer } from 'src/offers/entities/offer.entity';
 
 @Entity()
 export class Wish {
@@ -41,8 +43,8 @@ export class Wish {
   @Length(1, 1024)
   description: string;
 
-  @Column()
-  offers: string[]; //! Offer
+  @OneToMany(() => Offer, (offer) => offer.item)
+  offers: Offer[];
 
   @Column()
   copied: number;
