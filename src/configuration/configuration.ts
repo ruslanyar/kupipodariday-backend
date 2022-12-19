@@ -15,4 +15,5 @@ export default () => ({
   } as TypeOrmModuleOptions,
 
   saltRound: parseInt(process.env.SALT) || 10,
+  secretKey: process.env.JWT_SECRET,
 });
