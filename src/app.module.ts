@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { WishesModule } from './wishes/wishes.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
 import { OffersModule } from './offers/offers.module';
+import { HashModule } from './hash/hash.module';
 
 import configuration from './configuration/configuration';
 console.log(__dirname);
@@ -21,6 +22,7 @@ console.log(__dirname);
     WishesModule,
     WishlistsModule,
     OffersModule,
+    HashModule,
   ],
 })
 export class AppModule {}
