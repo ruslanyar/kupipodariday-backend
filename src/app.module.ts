@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { UsersModule } from './users/users.module';
 import { WishesModule } from './wishes/wishes.module';
@@ -9,15 +9,16 @@ import { OffersModule } from './offers/offers.module';
 import { HashModule } from './hash/hash.module';
 
 import configuration from './configuration/configuration';
-console.log(__dirname);
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ load: [configuration] }),
-    TypeOrmModule.forRoot({
-      ...configuration().database,
-      entities: [__dirname + '/**/entities/**.js'],
-      synchronize: true,
+    ConfigModule.forRoot({ load: [configuration], isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =>
+        configService.get('database'),
     }),
+
     UsersModule,
     WishesModule,
     WishlistsModule,

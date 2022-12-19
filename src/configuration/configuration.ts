@@ -10,6 +10,8 @@ export default () => ({
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
+    entities: ['../**/entities/**.js'],
+    synchronize: true,
   } as TypeOrmModuleOptions,
 
   saltRound: parseInt(process.env.SALT) || 10,
