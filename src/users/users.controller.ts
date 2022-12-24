@@ -34,6 +34,21 @@ export class UsersController {
     return this.usersService.updateOne(user.id, updateUserDto);
   }
 
+  @Get('me/wishes')
+  getMyWishes(@Req() req: Request) {
+    const user = req.user as User;
+    return this.usersService
+      .findOne({
+        where: { id: user.id },
+        relations: {
+          wishes: {
+            owner: true,
+          },
+        },
+      })
+      .then((user) => user.wishes);
+  }
+
   @Post('find')
   findMany(@Body() findUserDto: FindUserDto) {
     const { query } = findUserDto;

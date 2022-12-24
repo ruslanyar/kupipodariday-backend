@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 
 import { User } from 'src/users/entities/user.entity';
-import { UserPublicProfileResponseDto } from 'src/users/dto/user-public-profile-response.dto';
 import { Offer } from 'src/offers/entities/offer.entity';
 
 @Entity()
@@ -33,11 +32,11 @@ export class Wish {
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   price: number;
 
-  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
   raised: number;
 
   @ManyToOne(() => User, (user) => user.wishes)
-  owner: UserPublicProfileResponseDto;
+  owner: User;
 
   @Column()
   @Length(1, 1024)
@@ -46,7 +45,7 @@ export class Wish {
   @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];
 
-  @Column()
+  @Column({ default: 0 })
   copied: number;
 
   @CreateDateColumn()
