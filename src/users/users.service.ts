@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
+import { HashService } from 'src/hash/hash.service';
+
 import { User } from './entities/user.entity';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { HashService } from 'src/hash/hash.service';
 
 @Injectable()
 export class UsersService {
@@ -33,8 +35,17 @@ export class UsersService {
     return this.userRepository.find(query);
   }
 
-  updateOne(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateOne(id: number, updateUserDto: UpdateUserDto) {
+    const user = this.findOne({ where: { id } });
+
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.hashService.generate(
+        updateUserDto.password,
+      );
+    }
+
+    const updatedUser = { ...user, ...updateUserDto };
+    return this.userRepository.update(id, updatedUser);
   }
 
   removeOne(id: number) {
