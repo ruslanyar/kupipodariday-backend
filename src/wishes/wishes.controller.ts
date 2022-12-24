@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common';
 
 import { WishesService } from './wishes.service';
+
+import { JwtGuard } from 'src/auth/jwt.guard';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
-import { Request } from 'express';
-import { User } from 'src/users/entities/user.entity';
-import { JwtGuard } from 'src/auth/jwt.guard';
+import { RequestWithUser } from 'src/utils/request-with-user';
 
 @Controller('wishes')
 export class WishesController {
@@ -23,9 +23,8 @@ export class WishesController {
 
   @UseGuards(JwtGuard)
   @Post()
-  create(@Body() createWishDto: CreateWishDto, @Req() req: Request) {
-    const user = req.user as User;
-    return this.wishesService.create(createWishDto, user.id);
+  create(@Body() createWishDto: CreateWishDto, @Req() req: RequestWithUser) {
+    return this.wishesService.create(createWishDto, req.user.id);
   }
 
   @Get()

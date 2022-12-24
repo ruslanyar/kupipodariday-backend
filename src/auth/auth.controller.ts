@@ -1,11 +1,11 @@
-import { Request } from 'express';
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
+
 import { LocalAuthGuard } from './local-auth.guard';
-import { User } from 'src/users/entities/user.entity';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { RequestWithUser } from 'src/utils/request-with-user';
 
 @Controller()
 export class AuthController {
@@ -16,9 +16,8 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  signin(@Req() req: Request) {
-    const user = req.user as User;
-    return this.authService.auth(user);
+  signin(@Req() req: RequestWithUser) {
+    return this.authService.auth(req.user);
   }
 
   @Post('signup')

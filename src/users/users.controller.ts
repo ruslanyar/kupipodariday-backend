@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import {
   Controller,
   Get,
@@ -14,10 +13,9 @@ import { UsersService } from './users.service';
 
 import { JwtGuard } from 'src/auth/jwt.guard';
 
-import { User } from './entities/user.entity';
-
 import { FindUserDto } from './dto/find-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RequestWithUser } from 'src/utils/request-with-user';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -25,29 +23,28 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('me')
-  getUser(@Req() req: Request) {
+  getUser(@Req() req: RequestWithUser) {
     return req.user;
   }
 
   @Patch('me')
-  updateUser(@Body() updateUserDto: UpdateUserDto, @Req() req: Request) {
-    const user = req.user as User;
-    return this.usersService.updateOne(user.id, updateUserDto);
+  updateUser(
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.usersService.updateOne(req.user.id, updateUserDto);
   }
 
   @Get('me/wishes')
-  getMyWishes(@Req() req: Request) {
-    const user = req.user as User;
-    return this.usersService
-      .findOne({
-        where: { id: user.id },
-        relations: {
-          wishes: {
-            owner: true,
-          },
+  getMyWishes(@Req() req: RequestWithUser) {
+    return this.usersService.getUserWishes({
+      where: { id: req.user.id },
+      relations: {
+        wishes: {
+          owner: true,
         },
-      })
-      .then((user) => user.wishes);
+      },
+    });
   }
 
   @Get(':username')
@@ -67,14 +64,12 @@ export class UsersController {
 
   @Get(':username/wishes')
   getUserWishes(@Param('username') username: string) {
-    return this.usersService
-      .findOne({
-        where: { username },
-        relations: {
-          wishes: true,
-        },
-      })
-      .then((user) => user.wishes);
+    return this.usersService.getUserWishes({
+      where: { username },
+      relations: {
+        wishes: true,
+      },
+    });
   }
 
   @Post('find')
