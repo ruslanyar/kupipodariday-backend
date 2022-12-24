@@ -7,6 +7,7 @@ import {
   Req,
   UseGuards,
   Patch,
+  Param,
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
@@ -49,10 +50,45 @@ export class UsersController {
       .then((user) => user.wishes);
   }
 
+  @Get(':username')
+  getByUsername(@Param('username') username: string) {
+    return this.usersService.findOne({
+      select: {
+        id: true,
+        username: true,
+        about: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: { username },
+    });
+  }
+
+  @Get(':username/wishes')
+  getUserWishes(@Param('username') username: string) {
+    return this.usersService
+      .findOne({
+        where: { username },
+        relations: {
+          wishes: true,
+        },
+      })
+      .then((user) => user.wishes);
+  }
+
   @Post('find')
   findMany(@Body() findUserDto: FindUserDto) {
     const { query } = findUserDto;
     return this.usersService.findMany({
+      select: {
+        id: true,
+        username: true,
+        about: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: [{ username: query }, { email: query }],
     });
   }
