@@ -1,19 +1,11 @@
+import { Column, Entity, ManyToOne } from 'typeorm';
+
+import { Base } from 'src/utils/base.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
 
 @Entity()
-export class Offer {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Offer extends Base {
   @ManyToOne(() => Wish, (wish) => wish.offers)
   item: Wish;
 
@@ -25,10 +17,4 @@ export class Offer {
 
   @ManyToOne(() => User, (user) => user.offers)
   user: User;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }
