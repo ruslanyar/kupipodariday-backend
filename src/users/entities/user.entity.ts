@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { IsEmail, IsOptional, IsUrl, Length } from 'class-validator';
+import { Exclude } from 'class-transformer';
 
 import { Base } from 'src/utils/base.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
@@ -26,9 +27,11 @@ export class User extends Base {
 
   @Column()
   @IsEmail()
+  @Exclude()
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)

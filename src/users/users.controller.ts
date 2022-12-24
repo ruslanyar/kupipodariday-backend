@@ -7,6 +7,8 @@ import {
   UseGuards,
   Patch,
   Param,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
@@ -48,16 +50,9 @@ export class UsersController {
   }
 
   @Get(':username')
+  @UseInterceptors(ClassSerializerInterceptor)
   getByUsername(@Param('username') username: string) {
     return this.usersService.findOne({
-      select: {
-        id: true,
-        username: true,
-        about: true,
-        avatar: true,
-        createdAt: true,
-        updatedAt: true,
-      },
       where: { username },
     });
   }
@@ -73,17 +68,10 @@ export class UsersController {
   }
 
   @Post('find')
+  @UseInterceptors(ClassSerializerInterceptor)
   findMany(@Body() findUserDto: FindUserDto) {
     const { query } = findUserDto;
     return this.usersService.findMany({
-      select: {
-        id: true,
-        username: true,
-        about: true,
-        avatar: true,
-        createdAt: true,
-        updatedAt: true,
-      },
       where: [{ username: query }, { email: query }],
     });
   }
