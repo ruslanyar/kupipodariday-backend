@@ -6,30 +6,48 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 import { WishlistsService } from './wishlists.service';
 
+import { JwtGuard } from 'src/auth/jwt.guard';
+
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 
-@Controller('wishlists')
+import { RequestWithUser } from 'src/utils/request-with-user';
+
+@UseGuards(JwtGuard)
+@Controller('wishlistlists')
+@UseInterceptors(ClassSerializerInterceptor)
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 
   @Post()
-  create(@Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistsService.create(createWishlistDto);
+  create(
+    @Body() createWishlistDto: CreateWishlistDto,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.wishlistsService.create(createWishlistDto, req.user.id);
   }
 
   @Get()
-  findAll() {
-    return this.wishlistsService.findAll();
+  getWishlists() {
+    return this.wishlistsService.findMany({
+      relations: ['items', 'owner'],
+    });
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.wishlistsService.findOne(+id);
+    return this.wishlistsService.findOne({
+      where: { id: +id },
+      relations: ['items', 'owner'],
+    });
   }
 
   @Patch(':id')
@@ -42,6 +60,6 @@ export class WishlistsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.wishlistsService.remove(+id);
+    return this.wishlistsService.delete(+id);
   }
 }

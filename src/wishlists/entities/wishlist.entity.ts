@@ -1,5 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
-import { IsUrl, Length, MaxLength } from 'class-validator';
+import { IsOptional, IsUrl, Length, MaxLength } from 'class-validator';
 
 import { Base } from 'src/utils/base.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -14,8 +14,9 @@ export class Wishlist extends Base {
   @Length(1, 250)
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   @MaxLength(1500)
+  @IsOptional()
   description: string;
 
   @Column()
