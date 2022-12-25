@@ -42,9 +42,7 @@ export class UsersController {
     return this.usersService.getUserWishes({
       where: { id: req.user.id },
       relations: {
-        wishes: {
-          owner: true,
-        },
+        wishes: true,
       },
     });
   }

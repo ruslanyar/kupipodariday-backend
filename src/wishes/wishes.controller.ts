@@ -8,6 +8,8 @@ import {
   Delete,
   Req,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 import { WishesService } from './wishes.service';
@@ -18,6 +20,7 @@ import { UpdateWishDto } from './dto/update-wish.dto';
 import { RequestWithUser } from 'src/utils/request-with-user';
 
 @Controller('wishes')
+@UseInterceptors(ClassSerializerInterceptor)
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
@@ -27,23 +30,47 @@ export class WishesController {
     return this.wishesService.create(createWishDto, req.user.id);
   }
 
-  @Get()
-  findAll() {
-    return this.wishesService.findAll();
+  @Get('last')
+  findLast() {
+    return this.wishesService.findMany({
+      order: { createdAt: 'DESC' },
+      take: 40,
+    });
   }
 
+  @Get('top')
+  findTop() {
+    return this.wishesService.findMany({ order: { copied: 'DESC' }, take: 10 });
+  }
+
+  @UseGuards(JwtGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.wishesService.findOne(+id);
+    return this.wishesService.findOne({
+      where: { id: +id },
+      relations: { owner: true },
+    });
   }
 
+  @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
-    return this.wishesService.update(+id, updateWishDto);
+  update(
+    @Param('id') id: string,
+    @Req() req: RequestWithUser,
+    @Body() updateWishDto: UpdateWishDto,
+  ) {
+    return this.wishesService.update(+id, req.user.id, updateWishDto);
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishesService.remove(+id);
+  remove(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.wishesService.remove(+id, req.user.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post(':id/copy')
+  copy(@Param('id') wishId: string, @Req() req: RequestWithUser) {
+    return this.wishesService.copy(+wishId, req.user.id);
   }
 }
