@@ -36,7 +36,7 @@ export class UsersService {
   }
 
   async updateOne(id: number, updateUserDto: UpdateUserDto) {
-    const user = this.findOne({ where: { id } });
+    const user = await this.findOne({ where: { id } });
 
     if (updateUserDto.password) {
       updateUserDto.password = await this.hashService.generate(
@@ -45,7 +45,9 @@ export class UsersService {
     }
 
     const updatedUser = { ...user, ...updateUserDto };
-    return this.userRepository.update(id, updatedUser);
+    await this.userRepository.update(id, updatedUser);
+
+    return this.findOne({ where: { id } });
   }
 
   getUserWishes(query: FindOneOptions<User>) {

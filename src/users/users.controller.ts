@@ -31,6 +31,7 @@ export class UsersController {
   }
 
   @Patch('me')
+  @SerializeOptions({ groups: [GROUP_USER] })
   updateUser(
     @Body() updateUserDto: UpdateUserDto,
     @Req() req: RequestWithUser,
