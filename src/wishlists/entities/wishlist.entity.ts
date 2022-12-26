@@ -1,7 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { IsOptional, IsUrl, Length, MaxLength } from 'class-validator';
 
-import { Base } from 'src/utils/base.entity';
+import { Base } from 'src/utils/base-entity';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 

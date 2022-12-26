@@ -1,7 +1,7 @@
 import { IsUrl, Length } from 'class-validator';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
-import { Base } from 'src/utils/base.entity';
+import { Base } from 'src/utils/base-entity';
 import { User } from 'src/users/entities/user.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 
