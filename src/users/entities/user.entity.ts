@@ -1,11 +1,12 @@
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { IsEmail, IsOptional, IsUrl, Length } from 'class-validator';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 import { Base } from 'src/utils/base-entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { GROUP_USER } from 'src/utils/constants';
 
 @Entity()
 @Unique(['username'])
@@ -26,8 +27,8 @@ export class User extends Base {
   avatar: string;
 
   @Column()
+  @Expose({ groups: [GROUP_USER] })
   @IsEmail()
-  @Exclude()
   email: string;
 
   @Column()

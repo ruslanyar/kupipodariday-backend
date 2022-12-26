@@ -7,8 +7,7 @@ import {
   UseGuards,
   Patch,
   Param,
-  UseInterceptors,
-  ClassSerializerInterceptor,
+  SerializeOptions,
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
@@ -18,6 +17,7 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 import { FindUserDto } from './dto/find-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RequestWithUser } from 'src/utils/request-with-user';
+import { GROUP_USER } from 'src/utils/constants';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -25,6 +25,7 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('me')
+  @SerializeOptions({ groups: [GROUP_USER] })
   getUser(@Req() req: RequestWithUser) {
     return req.user;
   }
@@ -42,13 +43,12 @@ export class UsersController {
     return this.usersService.getUserWishes({
       where: { id: req.user.id },
       relations: {
-        wishes: true,
+        wishes: { owner: true },
       },
     });
   }
 
   @Get(':username')
-  @UseInterceptors(ClassSerializerInterceptor)
   getByUsername(@Param('username') username: string) {
     return this.usersService.findOne({
       where: { username },
@@ -66,7 +66,6 @@ export class UsersController {
   }
 
   @Post('find')
-  @UseInterceptors(ClassSerializerInterceptor)
   findMany(@Body() findUserDto: FindUserDto) {
     const { query } = findUserDto;
     return this.usersService.findMany({

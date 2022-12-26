@@ -8,8 +8,6 @@ import {
   Delete,
   UseGuards,
   Req,
-  UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 import { WishlistsService } from './wishlists.service';
@@ -23,7 +21,6 @@ import { RequestWithUser } from 'src/utils/request-with-user';
 
 @UseGuards(JwtGuard)
 @Controller('wishlistlists')
-@UseInterceptors(ClassSerializerInterceptor)
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 

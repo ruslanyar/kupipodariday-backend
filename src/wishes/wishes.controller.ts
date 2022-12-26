@@ -8,8 +8,6 @@ import {
   Delete,
   Req,
   UseGuards,
-  UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 import { WishesService } from './wishes.service';
@@ -20,7 +18,6 @@ import { UpdateWishDto } from './dto/update-wish.dto';
 import { RequestWithUser } from 'src/utils/request-with-user';
 
 @Controller('wishes')
-@UseInterceptors(ClassSerializerInterceptor)
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 

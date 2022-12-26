@@ -26,10 +26,7 @@ export class AuthService {
     const isVerified = await this.hashService.verify(pass, user.password);
 
     if (user && isVerified) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-
-      return result;
+      return user;
     }
 
     return null;
