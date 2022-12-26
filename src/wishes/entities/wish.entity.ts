@@ -5,6 +5,8 @@ import { Base } from 'src/utils/base.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 
+import { ColumnNumericTransformer } from 'src/utils/column-numeric-transformer';
+
 @Entity()
 export class Wish extends Base {
   @Column()
@@ -19,10 +21,21 @@ export class Wish extends Base {
   @IsUrl()
   image: string;
 
-  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  @Column({
+    type: 'numeric',
+    precision: 10,
+    scale: 2,
+    transformer: new ColumnNumericTransformer(),
+  })
   price: number;
 
-  @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
+  @Column({
+    type: 'numeric',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: new ColumnNumericTransformer(),
+  })
   raised: number;
 
   @ManyToOne(() => User, (user) => user.wishes)
