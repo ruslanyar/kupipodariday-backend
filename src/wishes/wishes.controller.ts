@@ -13,6 +13,7 @@ import {
 import { WishesService } from './wishes.service';
 
 import { JwtGuard } from 'src/auth/jwt.guard';
+
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { RequestWithUser } from 'src/utils/request-with-user';

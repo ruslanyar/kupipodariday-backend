@@ -3,13 +3,15 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import {
   DataSource,
   FindManyOptions,
   FindOneOptions,
   Repository,
 } from 'typeorm';
+
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Wish } from './entities/wish.entity';
 

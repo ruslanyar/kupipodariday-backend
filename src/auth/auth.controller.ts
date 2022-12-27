@@ -8,12 +8,12 @@ import {
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
+import { LocalAuthGuard } from './local-auth.guard';
 import { UsersService } from 'src/users/users.service';
 
-import { LocalAuthGuard } from './local-auth.guard';
+import { GROUP_USER } from 'src/utils/constants';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { RequestWithUser } from 'src/utils/request-with-user';
-import { GROUP_USER } from 'src/utils/constants';
 
 @Controller()
 export class AuthController {

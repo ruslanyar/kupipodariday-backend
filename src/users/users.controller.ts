@@ -16,8 +16,9 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 
 import { FindUserDto } from './dto/find-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RequestWithUser } from 'src/utils/request-with-user';
+
 import { GROUP_USER } from 'src/utils/constants';
+import { RequestWithUser } from 'src/utils/request-with-user';
 
 @UseGuards(JwtGuard)
 @Controller('users')
