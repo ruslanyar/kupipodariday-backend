@@ -61,7 +61,8 @@ export class WishesService {
       throw new ForbiddenException();
     }
 
-    return this.wishesRepository.delete(id);
+    this.wishesRepository.delete(id);
+    return wish;
   }
 
   async copy(wishId: number, userId: number) {

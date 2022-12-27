@@ -53,8 +53,4 @@ export class UsersService {
   getUserWishes(query: FindOneOptions<User>) {
     return this.findOne(query).then((user) => user.wishes);
   }
-
-  removeOne(id: number) {
-    return `This action removes a #${id} user`;
-  }
 }
