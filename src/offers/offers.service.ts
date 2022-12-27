@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DataSource,
@@ -9,9 +13,9 @@ import {
 
 import { Offer } from './entities/offer.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
+import { WishesService } from 'src/wishes/wishes.service';
 
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { WishesService } from 'src/wishes/wishes.service';
 
 @Injectable()
 export class OffersService {
@@ -31,11 +35,17 @@ export class OffersService {
     const { price, raised, owner } = wish;
 
     if (owner.id === userId) {
-      // Выбросить исключение - нельзя скидываться на свои подарки
+      throw new ForbiddenException(
+        'Вы не можете вносить деньги на собственные подарки',
+      );
     }
 
     if (amount + raised > price) {
-      // Выбросить исключение - собранные средства превышают стоимость
+      throw new ForbiddenException(
+        `Сумма взноса превышает сумму остатка стоимости подарка: ${
+          price - raised
+        } руб.`,
+      );
     }
 
     const offer = this.offerRepository.create({

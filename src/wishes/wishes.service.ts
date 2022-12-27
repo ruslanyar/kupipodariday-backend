@@ -43,10 +43,17 @@ export class WishesService {
   async update(id: number, userId: number, updateWishDto: UpdateWishDto) {
     const wish = await this.findOne({
       where: { id },
+      relations: { owner: true },
     });
 
     if (userId !== wish.owner.id) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('Вы не можете редактировать чужие подарки');
+    }
+
+    if (updateWishDto.price && wish.raised > 0) {
+      throw new ForbiddenException(
+        'Вы не можете изменять стоимость подарка, если уже есть желающие скинуться',
+      );
     }
 
     return this.wishesRepository.update(id, updateWishDto);
@@ -55,10 +62,11 @@ export class WishesService {
   async remove(id: number, userId: number) {
     const wish = await this.findOne({
       where: { id },
+      relations: { owner: true },
     });
 
     if (userId !== wish.owner.id) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('Вы не можете удалять чужие подарки');
     }
 
     this.wishesRepository.delete(id);
@@ -69,6 +77,23 @@ export class WishesService {
     const wish = await this.findOne({ where: { id: wishId } });
 
     const { name, description, image, link, price, copied } = wish;
+
+    const isExist = (await this.findOne({
+      where: {
+        name,
+        link,
+        price,
+        owner: { id: userId },
+      },
+      relations: { owner: true },
+    }))
+      ? true
+      : false;
+
+    if (isExist) {
+      throw new ForbiddenException('Вы уже копировали себе этот подарок');
+    }
+
     const wishCopy = {
       name,
       description,

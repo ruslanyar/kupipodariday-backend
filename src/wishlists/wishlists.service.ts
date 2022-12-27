@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
@@ -33,11 +33,43 @@ export class WishlistsService {
     return this.wishlistsRepository.findOne(query);
   }
 
-  update(id: number, updateWishlistDto: UpdateWishlistDto) {
-    return this.wishlistsRepository.update(id, updateWishlistDto);
+  async update(
+    id: number,
+    updateWishlistDto: UpdateWishlistDto,
+    userId: number,
+  ) {
+    const wishlist = await this.findOne({
+      where: { id },
+      relations: { owner: true },
+    });
+
+    if (wishlist.owner.id !== userId) {
+      throw new ForbiddenException(
+        'Вы не можете редактировать чужие списки подарков',
+      );
+    }
+
+    const { itemsId, ...rest } = updateWishlistDto;
+    const items = itemsId.map((id) => ({ id }));
+    const updatedWishlist = { ...rest, items };
+
+    await this.wishlistsRepository.update(id, updatedWishlist);
+    return this.findOne({ where: { id } });
   }
 
-  delete(id: number) {
-    return this.wishlistsRepository.delete(id);
+  async delete(id: number, userId) {
+    const wishlist = await this.findOne({
+      where: { id },
+      relations: { owner: true },
+    });
+
+    if (wishlist.owner.id !== userId) {
+      throw new ForbiddenException(
+        'Вы не можете удалять чужие списки подарков',
+      );
+    }
+
+    await this.wishlistsRepository.delete(id);
+    return wishlist;
   }
 }

@@ -45,12 +45,20 @@ export class UsersService {
   }
 
   async updateOne(id: number, updateUserDto: UpdateUserDto) {
+    const { email, username, password } = updateUserDto;
+    const isExist = (await this.findOne({ where: [{ email }, { username }] }))
+      ? true
+      : false;
+
+    if (isExist)
+      throw new ConflictException(
+        'Пользователь с таким email или username уже зарегистрирован',
+      );
+
     const user = await this.findOne({ where: { id } });
 
-    if (updateUserDto.password) {
-      updateUserDto.password = await this.hashService.generate(
-        updateUserDto.password,
-      );
+    if (password) {
+      updateUserDto.password = await this.hashService.generate(password);
     }
 
     const updatedUser = { ...user, ...updateUserDto };

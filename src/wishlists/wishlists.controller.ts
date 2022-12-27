@@ -51,12 +51,13 @@ export class WishlistsController {
   update(
     @Param('id') id: string,
     @Body() updateWishlistDto: UpdateWishlistDto,
+    @Req() req: RequestWithUser,
   ) {
-    return this.wishlistsService.update(+id, updateWishlistDto);
+    return this.wishlistsService.update(+id, updateWishlistDto, req.user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishlistsService.delete(+id);
+  remove(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.wishlistsService.delete(+id, req.user.id);
   }
 }
