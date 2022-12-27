@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
-import { IsEmail, IsOptional, IsUrl, Length } from 'class-validator';
+import { IsEmail, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 import { Exclude, Expose } from 'class-transformer';
 
 import { Base } from 'src/utils/base-entity';
@@ -18,6 +18,7 @@ export class User extends Base {
 
   @Column({ default: 'Пока ничего не рассказал о себе' })
   @IsOptional()
+  @IsString()
   @Length(2, 200)
   about: string;
 

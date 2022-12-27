@@ -31,7 +31,10 @@ export class AuthController {
   @Post('signup')
   @SerializeOptions({ groups: [GROUP_USER] })
   async signup(@Body() createUserDto: CreateUserDto) {
-    const user = await this.userService.create(createUserDto);
+    const { about, ...rest } = createUserDto;
+    const dto = (about === '' ? rest : createUserDto) as CreateUserDto;
+
+    const user = await this.userService.create(dto);
     this.authService.auth(user);
     return user;
   }
