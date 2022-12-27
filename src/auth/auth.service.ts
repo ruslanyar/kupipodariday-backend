@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { HashService } from 'src/hash/hash.service';
-import { User } from 'src/users/entities/user.entity';
 
+import { User } from 'src/users/entities/user.entity';
+import { HashService } from 'src/hash/hash.service';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -23,10 +23,11 @@ export class AuthService {
 
   async validateUser(username: string, pass: string) {
     const user = await this.userService.findOne({ where: { username } });
-    const isVerified = await this.hashService.verify(pass, user.password);
 
-    if (user && isVerified) {
-      return user;
+    if (user && user.password) {
+      const isVerified = await this.hashService.verify(pass, user.password);
+
+      return isVerified ? user : null;
     }
 
     return null;

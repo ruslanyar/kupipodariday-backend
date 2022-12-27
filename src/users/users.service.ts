@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
@@ -18,7 +18,16 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const hash = await this.hashService.generate(createUserDto.password);
+    const { email, username, password } = createUserDto;
+    const user = await this.findOne({ where: [{ email }, { username }] });
+
+    if (user) {
+      throw new ConflictException(
+        'Пользователь с таким email или username уже зарегистрирован',
+      );
+    }
+
+    const hash = await this.hashService.generate(password);
     const newUser = this.userRepository.create({
       ...createUserDto,
       password: hash,
