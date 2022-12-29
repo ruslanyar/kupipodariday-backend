@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import {
   DataSource,
@@ -57,24 +53,12 @@ export class OffersService {
       item: { id: itemId },
     });
 
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await queryRunner.manager.insert<Offer>(Offer, offer);
-      await queryRunner.manager.update<Wish>(Wish, itemId, {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.insert<Offer>(Offer, offer);
+      await transactionalEntityManager.update<Wish>(Wish, itemId, {
         raised: raised + amount,
       });
-
-      await queryRunner.commitTransaction();
-    } catch {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException();
-    } finally {
-      await queryRunner.release();
-    }
+    });
 
     return {};
   }
@@ -85,5 +69,24 @@ export class OffersService {
 
   findOne(query: FindOneOptions<Offer>) {
     return this.offerRepository.findOne(query);
+  }
+
+  getOffers() {
+    return this.findMany({
+      relations: {
+        item: { owner: true },
+        user: { wishes: true, offers: true },
+      },
+    });
+  }
+
+  getById(id: number) {
+    return this.findOne({
+      where: { id },
+      relations: {
+        item: { owner: true },
+        user: { wishes: true, offers: true },
+      },
+    });
   }
 }

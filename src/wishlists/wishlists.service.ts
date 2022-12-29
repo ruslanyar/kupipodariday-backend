@@ -33,6 +33,19 @@ export class WishlistsService {
     return this.wishlistsRepository.findOne(query);
   }
 
+  getWishlists() {
+    return this.findMany({
+      relations: ['items', 'owner'],
+    });
+  }
+
+  getById(id: number) {
+    return this.findOne({
+      where: { id },
+      relations: ['items', 'owner'],
+    });
+  }
+
   async update(
     id: number,
     updateWishlistDto: UpdateWishlistDto,

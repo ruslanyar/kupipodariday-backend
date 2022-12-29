@@ -29,25 +29,19 @@ export class WishesController {
   }
 
   @Get('last')
-  findLast() {
-    return this.wishesService.findMany({
-      order: { createdAt: 'DESC' },
-      take: 40,
-    });
+  getLastWishes() {
+    return this.wishesService.getLastWishes();
   }
 
   @Get('top')
-  findTop() {
-    return this.wishesService.findMany({ order: { copied: 'DESC' }, take: 10 });
+  getTopWishes() {
+    return this.wishesService.getTopWishes();
   }
 
   @UseGuards(JwtGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.wishesService.findOne({
-      where: { id: +id },
-      relations: { owner: true },
-    });
+  getById(@Param('id') id: string) {
+    return this.wishesService.getById(+id);
   }
 
   @UseGuards(JwtGuard)

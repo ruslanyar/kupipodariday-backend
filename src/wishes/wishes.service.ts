@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import {
   DataSource,
@@ -40,6 +36,24 @@ export class WishesService {
 
   findOne(query: FindOneOptions<Wish>) {
     return this.wishesRepository.findOne(query);
+  }
+
+  getLastWishes() {
+    return this.findMany({
+      order: { createdAt: 'DESC' },
+      take: 40,
+    });
+  }
+
+  getTopWishes() {
+    return this.findMany({ order: { copied: 'DESC' }, take: 10 });
+  }
+
+  getById(id: number) {
+    return this.findOne({
+      where: { id },
+      relations: { owner: true },
+    });
   }
 
   async update(id: number, userId: number, updateWishDto: UpdateWishDto) {
@@ -80,7 +94,7 @@ export class WishesService {
 
     const { name, description, image, link, price, copied } = wish;
 
-    const isExist = (await this.findOne({
+    const isExist = !!(await this.findOne({
       where: {
         name,
         link,
@@ -88,9 +102,7 @@ export class WishesService {
         owner: { id: userId },
       },
       relations: { owner: true },
-    }))
-      ? true
-      : false;
+    }));
 
     if (isExist) {
       throw new ForbiddenException('Вы уже копировали себе этот подарок');
@@ -105,24 +117,13 @@ export class WishesService {
       owner: { id: userId },
     };
 
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await queryRunner.manager.update<Wish>(Wish, wishId, {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.update<Wish>(Wish, wishId, {
         copied: copied + 1,
       });
 
-      await queryRunner.manager.insert<Wish>(Wish, wishCopy);
-      await queryRunner.commitTransaction();
-    } catch {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException();
-    } finally {
-      await queryRunner.release();
-    }
+      await transactionalEntityManager.insert<Wish>(Wish, wishCopy);
+    });
 
     return {};
   }
