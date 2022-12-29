@@ -46,9 +46,9 @@ export class UsersService {
 
   async updateOne(id: number, updateUserDto: UpdateUserDto) {
     const { email, username, password } = updateUserDto;
-    const isExist = (await this.findOne({ where: [{ email }, { username }] }))
-      ? true
-      : false;
+    const isExist = !!(await this.findOne({
+      where: [{ email }, { username }],
+    }));
 
     if (isExist)
       throw new ConflictException(
@@ -67,7 +67,33 @@ export class UsersService {
     return this.findOne({ where: { id } });
   }
 
-  getUserWishes(query: FindOneOptions<User>) {
-    return this.findOne(query).then((user) => user.wishes);
+  getByUsername(username: string) {
+    return this.findOne({
+      where: { username },
+    });
+  }
+
+  getUserWishes(userId: number) {
+    return this.findOne({
+      where: { id: userId },
+      relations: {
+        wishes: { owner: true },
+      },
+    }).then((user) => user.wishes);
+  }
+
+  getAnotherUserWishes(username: string) {
+    return this.findOne({
+      where: { username },
+      relations: {
+        wishes: true,
+      },
+    }).then((user) => user.wishes);
+  }
+
+  findByUsernameOrEmail(query: string) {
+    return this.findMany({
+      where: [{ username: query }, { email: query }],
+    });
   }
 }

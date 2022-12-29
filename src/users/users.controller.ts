@@ -42,36 +42,22 @@ export class UsersController {
 
   @Get('me/wishes')
   getMyWishes(@Req() req: RequestWithUser) {
-    return this.usersService.getUserWishes({
-      where: { id: req.user.id },
-      relations: {
-        wishes: { owner: true },
-      },
-    });
+    return this.usersService.getUserWishes(req.user.id);
   }
 
   @Get(':username')
   getByUsername(@Param('username') username: string) {
-    return this.usersService.findOne({
-      where: { username },
-    });
+    return this.usersService.getByUsername(username);
   }
 
   @Get(':username/wishes')
   getUserWishes(@Param('username') username: string) {
-    return this.usersService.getUserWishes({
-      where: { username },
-      relations: {
-        wishes: true,
-      },
-    });
+    return this.usersService.getAnotherUserWishes(username);
   }
 
   @Post('find')
-  findMany(@Body() findUserDto: FindUserDto) {
+  findByUserNameOrEmail(@Body() findUserDto: FindUserDto) {
     const { query } = findUserDto;
-    return this.usersService.findMany({
-      where: [{ username: query }, { email: query }],
-    });
+    return this.usersService.findByUsernameOrEmail(query);
   }
 }

@@ -26,22 +26,11 @@ export class OffersController {
 
   @Get()
   getOffers() {
-    return this.offersService.findMany({
-      relations: {
-        item: { owner: true },
-        user: { wishes: true, offers: true },
-      },
-    });
+    return this.offersService.getOffers();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.offersService.findOne({
-      where: { id: +id },
-      relations: {
-        item: { owner: true },
-        user: { wishes: true, offers: true },
-      },
-    });
+  getById(@Param('id') id: string) {
+    return this.offersService.getById(+id);
   }
 }

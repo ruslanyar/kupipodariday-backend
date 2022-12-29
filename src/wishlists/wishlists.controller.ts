@@ -34,17 +34,12 @@ export class WishlistsController {
 
   @Get()
   getWishlists() {
-    return this.wishlistsService.findMany({
-      relations: ['items', 'owner'],
-    });
+    return this.wishlistsService.getWishlists();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.wishlistsService.findOne({
-      where: { id: +id },
-      relations: ['items', 'owner'],
-    });
+  getById(@Param('id') id: string) {
+    return this.wishlistsService.getById(+id);
   }
 
   @Patch(':id')
