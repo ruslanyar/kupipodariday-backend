@@ -14,7 +14,7 @@ export class WishlistsService {
     private wishlistsRepository: Repository<Wishlist>,
   ) {}
 
-  create(createWishlistDto: CreateWishlistDto, ownerId) {
+  create(createWishlistDto: CreateWishlistDto, ownerId: number) {
     const { itemsId, ...rest } = createWishlistDto;
     const items = itemsId.map((id) => ({ id }));
     const wishList = this.wishlistsRepository.create({
@@ -70,7 +70,7 @@ export class WishlistsService {
     return this.findOne({ where: { id } });
   }
 
-  async delete(id: number, userId) {
+  async delete(id: number, userId: number) {
     const wishlist = await this.findOne({
       where: { id },
       relations: { owner: true },
