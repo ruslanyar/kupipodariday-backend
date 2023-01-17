@@ -73,22 +73,26 @@ export class UsersService {
     });
   }
 
-  getUserWishes(userId: number) {
-    return this.findOne({
+  async getUserWishes(userId: number) {
+    const user = await this.findOne({
       where: { id: userId },
       relations: {
         wishes: { owner: true },
       },
-    }).then((user) => user.wishes);
+    });
+
+    return user.wishes;
   }
 
-  getAnotherUserWishes(username: string) {
-    return this.findOne({
+  async getAnotherUserWishes(username: string) {
+    const user = await this.findOne({
       where: { username },
       relations: {
         wishes: true,
       },
-    }).then((user) => user.wishes);
+    });
+
+    return user.wishes;
   }
 
   findByUsernameOrEmail(query: string) {
